@@ -19,14 +19,20 @@
 	}
 	
 	private function executeHandlers(req, res) {
-		var _break = false;
 		for(var fn in req.getRoute().handlers) {
-			if(_break) break;
-			fn(req, res, function(){
-				if(queueNextRoute(req)) executeHandlers(req, res);
-				_break = true;
+			var _break = true;
+			fn(req, res, function(what="fn"){
+				if(arguments.what == "route") {
+					if(queueNextRoute(req)) executeHandlers(req, res);
+					_break = true;
+				}
+				else {
+					_break = false;
+				}
 			});
+			if(_break) break;
 		}
+		
 		if(queueNextRoute(req)) executeHandlers(req, res);
 		
 	}
@@ -109,6 +115,16 @@
 		return getHttpRequestData().method;
 	}
 
+	public function use(route, handler) {
+		if(!isSimpleValue(route)) {
+			handler = route;
+			route = ".*";
+		}
+		if(isInstanceOf(handler, "net.m0nk3y.candy.App")) {
+		 // TODO: implement this	
+		}
+		
+	}
 	
 	public function get(route, handler) {
 		arguments.method = "GET";
@@ -123,5 +139,7 @@
 		if(len(cgi.path_info)==0) return "/";
 		return cgi.path_info;
 	}
+	
+	
 
 }

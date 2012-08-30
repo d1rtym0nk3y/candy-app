@@ -8,52 +8,48 @@ component {
 	};
 
 	function onApplicationStart() {
-		app = new net.m0nk3y.candy.App();
-		foo = new foo();
+		var app = new net.m0nk3y.candy.App();
+		
+		var menu = function(req,res,next) {
+			res.render("/views/menu.cfm", "menu");
+			next();
+		};
+		
+		var layout = function(req, res, next) {
+			res.render("/views/layout.cfm");
+			next();
+		};
 		
 		// default page
 		app.get("/", function(req, res, next) {
-			res.render("/views/1.cfm", "body");
-		});
-
-		app.get("/", function(req, res, next) {
-			res.render("/views/1.cfm", "body");
+			res.render("/views/home.cfm", "body");
 		});
 
 
-		// example action
-		app.get("/something/:foo/:bar", function(req, res, next) {
-			req.getContext().setid(foo.id());
-			res.render("/views/1.cfm", "body");
-		});
-		
-		
-		
-		
+		var main = new example.module.main.main(app);
+		main.load();
+
 		
 		// sitewide layout
-		app.get(".*", function(req, res, next) {
-			req.getContext().setid(foo.id());
-			res.render("/views/layout.cfm");
-		});
+		app.get(".*", [menu,layout]);
+		
+		
+		
 		
 		application.candy = app;
 	}
 	
 	function onRequestStart() {
-		request.s = gettickcount();
-//		if(!isNull(url.init)) {
+		url.init = 1;
+		if(!isNull(url.init)) {
 			onApplicationStart();
-//		}
+		}
 	}
 	
 	function onRequest() {
 		application.candy.dispatch();
 	}
+	
 
-
-	function onRequestEnd() {
-		writeOutput("<br>" & gettickcount()-request.s);
-	}	
 	
 }

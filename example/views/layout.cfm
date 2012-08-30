@@ -1,7 +1,9 @@
+<cfoutput>
 header
 <hr>
-<cfoutput>#rc.getBody()#</cfoutput>
+#views.getMenu()#
+<hr>
+#views.getBody()#
 <hr>
 footer
-
-<cfoutput>#rc.getid()#</cfoutput>
+</cfoutput>
